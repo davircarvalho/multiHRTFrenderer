@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# big files
+*.sofa
+*.wav
+*.flac

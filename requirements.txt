@@ -1,0 +1,6 @@
+sofar
+pyaudio
+numpy
+librosa
+FIRconv
+EACheadtracker

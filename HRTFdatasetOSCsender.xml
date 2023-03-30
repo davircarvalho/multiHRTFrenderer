@@ -1,0 +1,12 @@
+<data label="HRTFDatasets">
+  <target value="udp://255.255.255.255:5556">
+    <option>udp://255.255.255.255:5556</option>
+  </target>
+  <address-prefix value="/"/>
+  <select name="Datasets " address="/id" value="0" color="#ffffffff" value-type="string" auto-send="true">
+    <option>3</option>
+    <option selected="true">0</option>
+    <option>1</option>
+    <option>2</option>
+  </select>
+</data>
