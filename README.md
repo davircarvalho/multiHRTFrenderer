@@ -18,7 +18,7 @@ Com template permite que você se comunique com a máquina de auralização e al
 Rode o arquivo ```renderer.py```, que funciona de forma interativa.
 
 
-Na celula *Global configs* 
+Na celula *Global configs* edite o caminho para os arquivos .sofa e para o audio a ser reproduzido.
 
 
 
