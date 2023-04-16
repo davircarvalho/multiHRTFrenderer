@@ -1,7 +1,7 @@
 '''
 Real time HRTF renderer.
 
-Multiple SOFA files can be loaded and arbitraryly switched using UDP messages
+Multiple SOFA files can be loaded and arbitrarily switched using UDP messages
 Authors: Davi Rocha Carvalho
 '''
 
@@ -21,8 +21,8 @@ from datasetIndexReceiver import DatasetIndexReceiver
 
 # %% Global configs ##################################################################
 # head tracker data receiver config
-isHeadTracker = False
-HT_IP = '0.0.0.0'
+isHeadTracker = True
+HT_IP = '127.0.0.1'
 HT_PORT = 5555
 CAM_ID = 0  # select index of camera feed
 
@@ -43,6 +43,18 @@ SOFAfiles = ['SOFA/P0138_Windowed_44kHz.sofa',
 # Audio path
 audioPath = 'Audio/01 - My Favorite Things.flac'
 
+
+# Source position
+''' NOTE os angulos são em coordenadas "navigacionais"
+    -180 < azimute < 180
+    -90 < elevação < 90
+    tal que 0° é diretamente a frente,
+    elevação=90: topo
+    azimute negativo: esquerda
+'''
+src_azim = 30  # azimute
+src_elev = 0   # elevação
+
 # ##################################################################################33
 # %% SOFA setup
 Objs = []
@@ -58,7 +70,8 @@ else:
 
 
 # %% initialize Dataset Index Receiver
-sofaIDXmanager = DatasetIndexReceiver(IP=DS_IP, PORT=DS_PORT)
+sofaIDXmanager = DatasetIndexReceiver(IP_rcv=DS_IP, PORT_rcv=DS_PORT,
+                                      IP_snd=HT_IP, PORT_snd=HT_PORT)
 
 
 # %% Audio Input
@@ -95,8 +108,11 @@ if isHeadTracker:
         Objs[n].SourcePosition = sph2cart(Objs[n].SourcePosition)
 
 
-def closestPosIdx(posArray, azi, ele):
-    pErr = np.sqrt((posArray[:, 0] - azi)**2 + (posArray[:, 1] - ele)**2)
+def closestPosIdx(posArray, azi, ele, src_azim=src_azim, src_elev=src_elev):
+    aparent_azi = azi - src_azim
+    aparent_ele = ele - src_elev
+    pErr = np.sqrt((posArray[:, 0] - aparent_azi)**2 +
+                   (posArray[:, 1] - aparent_ele)**2)
     return np.argmin(pErr)
 
 
