@@ -2,11 +2,15 @@
   <target value="udp://255.255.255.255:5556">
     <option>udp://255.255.255.255:5556</option>
   </target>
-  <address-prefix value="/"/>
-  <select name="Datasets " address="/id" value="0" color="#ffffffff" value-type="string" auto-send="true">
-    <option>3</option>
-    <option selected="true">0</option>
+  <address-prefix value="/">
+    <option>/</option>
+  </address-prefix>
+  <select name="Datasets " address="/id" value="2" color="#ffffffff" value-type="string" auto-send="true">
+    <option>0</option>
     <option>1</option>
-    <option>2</option>
+    <option selected="true">2</option>
+  </select>
+  <select name="Captura" address="captur/" value="Capture" color="#ffffffff" value-type="string" auto-send="false">
+    <option selected="true">Capture</option>
   </select>
 </data>
