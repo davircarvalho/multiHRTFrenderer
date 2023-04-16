@@ -133,3 +133,4 @@ dmypy.json
 *.sofa
 *.wav
 *.flac
+*.npz
