@@ -11,7 +11,7 @@ import pyaudio
 import warnings
 import threading
 import numpy as np
-import librosa as lb
+import soundfile as sf
 from copy import deepcopy
 from FIRconv import FIRfilter
 from EACheadtracker import HeadTracker
@@ -52,7 +52,7 @@ audioPath = 'Audio/01 - My Favorite Things.flac'
     elevação=90: topo
     azimute negativo: esquerda
 '''
-src_azim = 30  # azimute
+src_azim = 0  # azimute
 src_elev = 0   # elevação
 
 # ##################################################################################33
@@ -75,20 +75,12 @@ sofaIDXmanager = DatasetIndexReceiver(IP_rcv=DS_IP, PORT_rcv=DS_PORT,
 
 
 # %% Audio Input
-def mono2stereo(audio):
-    if np.size(audio.shape) < 2:
-        audio = np.expand_dims(audio, 0)
-        audio = np.append(audio, audio, axis=0)
-    return audio.T
-
-
 # Audio input
-audio_in, _ = lb.load(audioPath,
-                      sr=fs,
-                      mono=True,
-                      duration=None,
+audio_in, _ = sf.read(audioPath,
+                      samplerate=None,
+                      always_2d=True,
                       dtype=np.float32)  # input signal
-audio_in = mono2stereo(audio_in)
+audio_in = np.mean(audio_in, axis=1, keepdims=True)
 N_ch = audio_in.shape[-1]
 
 
@@ -110,7 +102,7 @@ if isHeadTracker:
 
 def closestPosIdx(posArray, azi, ele, src_azim=src_azim, src_elev=src_elev):
     aparent_azi = azi - src_azim
-    aparent_ele = ele - src_elev
+    aparent_ele = src_elev - ele
     pErr = np.sqrt((posArray[:, 0] - aparent_azi)**2 +
                    (posArray[:, 1] - aparent_ele)**2)
     return np.argmin(pErr)
@@ -129,7 +121,7 @@ idxSOFA = 0
 p = pyaudio.PyAudio()
 # open stream (2)
 stream = p.open(format=pyaudio.paFloat32,
-                channels=N_ch,
+                channels=2,
                 rate=fs,
                 output=True,
                 frames_per_buffer=buffer_sz)
@@ -137,7 +129,7 @@ stream = p.open(format=pyaudio.paFloat32,
 # play stream (3)
 sigLen = audio_in.shape[0]
 
-data_out = np.zeros((buffer_sz, N_ch))
+data_out = np.zeros((buffer_sz, 2))
 frame_start = 0
 frame_end = frame_start + buffer_sz
 while True:
