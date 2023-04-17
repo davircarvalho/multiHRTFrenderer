@@ -1,8 +1,8 @@
 sofar==0.3.1
 pyaudio==0.2.13
-numpy
 scipy==1.7.3
-librosa==0.10.0
+soudfile
 FIRconv
 EACheadtracker
+numpy
 ipykernel
