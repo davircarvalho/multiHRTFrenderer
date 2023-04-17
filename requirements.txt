@@ -1,8 +1,8 @@
-netcdf=1.5.8
-scipy=1.7.3
-sofar=0.3.1
-pyaudio=0.2.13
-numpy=1.21.6
-librosa=0.10.0
+sofar==0.3.1
+pyaudio==0.2.13
+numpy
+scipy==1.7.3
+librosa==0.10.0
 FIRconv
 EACheadtracker
+ipykernel
