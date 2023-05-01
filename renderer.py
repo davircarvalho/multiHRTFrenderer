@@ -35,13 +35,12 @@ buffer_sz = 1024
 method = 'upols'  # FIR method
 
 # List the files you wanna load
-SOFAfiles = ['SOFA/P0138_Windowed_44kHz.sofa',
-             'SOFA/pp3_HRIRs_measured.sofa',
-             'SOFA/pp3_HRIRs_simulated.sofa',
-             'SOFA/subject_011.sofa']
+SOFAfiles = ['SOFA/FABIAN_HRIR_measured_HATO_0_processada.sofa',
+             'SOFA/HRTF_individualizada_44.1kHz_processada.sofa']
 
-# Audio path
-audioPath = 'Audio/01 - My Favorite Things.flac'
+# Audio path'
+# audioPath = 'Audio/drums.wav'
+# audioPath = 'Audio/sabine.wav'
 
 
 # Source position
@@ -135,7 +134,9 @@ frame_end = frame_start + buffer_sz
 while True:
 
     # check if dataset changed
-    idxSOFA = sofaIDXmanager.latest
+    idxSOFA_tmp = sofaIDXmanager.latest
+    if idxSOFA_tmp < len(SOFAfiles): # only update if index is within range
+        idxSOFA = deepcopy(idxSOFA_tmp)
 
     # get head tracker position
     if isHeadTracker:
