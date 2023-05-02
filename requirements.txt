@@ -1,7 +1,7 @@
 sofar==0.3.1
 pyaudio==0.2.13
 scipy==1.7.3
-soudfile
+soundfile
 FIRconv
 EACheadtracker
 numpy
