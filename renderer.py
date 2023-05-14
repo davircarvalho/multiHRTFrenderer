@@ -14,6 +14,7 @@ import numpy as np
 import soundfile as sf
 from copy import deepcopy
 from FIRconv import FIRfilter
+from geometry import GeomtryFunctions
 from EACheadtracker import HeadTracker
 from positionReceiver import PositionReceiver
 from datasetIndexReceiver import DatasetIndexReceiver
@@ -31,15 +32,14 @@ DS_IP = '0.0.0.0'
 DS_PORT = 5556
 
 # audio rendering config
-buffer_sz = 1024
+buffer_sz = 512
 method = 'upols'  # FIR method
 
 # List the files you wanna load
-SOFAfiles = ['SOFA/FABIAN_HRIR_measured_HATO_0_processada.sofa',
-             'SOFA/HRTF_individualizada_44.1kHz_processada.sofa']
+SOFAfiles = ['SOFA/HRTF_individualizada_44.1kHz.sofa']
 
 # Audio path'
-# audioPath = 'Audio/drums.wav'
+audioPath = 'Audio/drums.wav'
 # audioPath = 'Audio/sabine.wav'
 
 
@@ -49,7 +49,7 @@ SOFAfiles = ['SOFA/FABIAN_HRIR_measured_HATO_0_processada.sofa',
     -90 < elevação < 90
     tal que 0° é diretamente a frente,
     elevação=90: topo
-    azimute negativo: esquerda
+    azimute negativo: direita
 '''
 src_azim = 0  # azimute
 src_elev = 0   # elevação
@@ -98,27 +98,21 @@ if isHeadTracker:
     for n in range(len(Objs)):
         Objs[n].SourcePosition = sph2cart(Objs[n].SourcePosition)
 
-
-def closestPosIdx(posArray, azi, ele, src_azim=src_azim, src_elev=src_elev):
-    aparent_azi = azi - src_azim
-    aparent_ele = src_elev - ele
-    pErr = np.sqrt((posArray[:, 0] - aparent_azi)**2 +
-                   (posArray[:, 1] - aparent_ele)**2)
-    return np.argmin(pErr)
-
-
-idxPos = closestPosIdx(Objs[0].SourcePosition, azi=0, ele=0)
+# initialize position index manager
+PosManager = []
+for Obj in Objs:
+    PosManager.append(GeomtryFunctions(Obj.SourcePosition, src_azim, src_elev))
 
 
 # %% Initialize FIR filter
-FIRfilt = FIRfilter(method, buffer_sz, h=Objs[0].Data_IR[idxPos, :, :].T)
-
 idxSOFA = 0
+idxPos = PosManager[idxSOFA].closestPosIdx(yaw=0, pitch=0, roll=0)
+FIRfilt = FIRfilter(method, buffer_sz, h=Objs[idxSOFA].Data_IR[idxPos, :, :].T)
+
 
 # %% Stream audio
 # instantiate PyAudio (1)
 p = pyaudio.PyAudio()
-# open stream (2)
 stream = p.open(format=pyaudio.paFloat32,
                 channels=2,
                 rate=fs,
@@ -131,16 +125,16 @@ sigLen = audio_in.shape[0]
 data_out = np.zeros((buffer_sz, 2))
 frame_start = 0
 frame_end = frame_start + buffer_sz
-while True:
 
-    # check if dataset changed
+while True:
+    # check if dataset has changed
     idxSOFA_tmp = sofaIDXmanager.latest
     if idxSOFA_tmp < len(SOFAfiles): # only update if index is within range
         idxSOFA = deepcopy(idxSOFA_tmp)
 
     # get head tracker position
     if isHeadTracker:
-        idxPos = closestPosIdx(Objs[idxSOFA].SourcePosition, HTreceiver.yaw, HTreceiver.pitch)
+        idxPos = PosManager[idxSOFA].closestPosIdx(HTreceiver.yaw, HTreceiver.pitch, -1*HTreceiver.roll)
 
     # process data
     data_out = FIRfilt.process(audio_in[frame_start:frame_end, :],
