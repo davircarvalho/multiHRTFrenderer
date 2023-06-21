@@ -6,3 +6,4 @@ FIRconv
 EACheadtracker
 numpy
 ipykernel
+keyboard
