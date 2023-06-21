@@ -23,13 +23,13 @@ Na celula *Global configs* edite o caminho para os arquivos .sofa e para o audio
 
 # Hotkeys
 
-Como alternativa para utilizar o app, os comandos de troca de dataset e salvar posicao atual do headtracker pode ser ativadas por meio de comandos no teclado
+Como alternativa para utilizar o app, os comandos de troca de dataset e salvar posicao atual do headtracker pode ser ativadas por meio de comandos no teclado:
 
--**barra de espaco**: salvar posicao atual
--**AltGr** + **0**: selecionar dataset 0 
--**AltGr** + **1**: selecionar dataset 1
--**AltGr** + **2**: selecionar dataset 2 
--**AltGr** + **3**: selecionar dataset 3 
--**AltGr** + **4**: selecionar dataset 4 
+- **Espaco**: salvar posicao atual
+- **AltGr** + **0**: selecionar dataset 0 
+- **AltGr** + **1**: selecionar dataset 1
+- **AltGr** + **2**: selecionar dataset 2 
+- **AltGr** + **3**: selecionar dataset 3 
+- **AltGr** + **4**: selecionar dataset 4 
 
 
