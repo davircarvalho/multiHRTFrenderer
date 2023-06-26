@@ -44,60 +44,31 @@ class DatasetIndexReceiver():
     # Hotkey control
     def controlHotKeys(self): 
         savepos = False  
-        send0 = False
-        send1 = False  
-        send2 = False   
-        send3 = False   
-        send4 = False  
+        changeDatasetIdx = None
+ 
         while True:
             time.sleep(0.1)  
+
+            # capture position
             if keyboard.is_pressed('space'):
                 savepos = True
 
-
-            if keyboard.is_pressed('alt gr+0'):
-                send0 = True
-            if keyboard.is_pressed('alt gr+1'):
-                send1 = True
-            if keyboard.is_pressed('alt gr+2'):
-                send2 = True
-            if keyboard.is_pressed('alt gr+3'):
-                send3 = True
-            if keyboard.is_pressed('alt gr+4'):
-                send4 = True
-
-            # take action after key release
-            if (not keyboard.is_pressed('space') and savepos):  # capture position
+            if (not keyboard.is_pressed('space') and savepos): 
                 savepos = False
                 # print('space') 
                 self.sock_send.sendto('captur'.encode(), self.ADDR_snd)
 
+            # change dataset index
+            for number_key in range(10):
+                if keyboard.is_pressed(f'alt gr+{number_key}'):
+                    changeDatasetIdx = number_key
 
-            if (not keyboard.is_pressed('alt gr+0') and send0):  # dataset index
-                send0 = False
-                self.latest = 0
-                print(f'Dataset: {self.latest}')
+                if (not keyboard.is_pressed(f'alt gr+{number_key}') and isinstance(changeDatasetIdx, int)):  # dataset index
+                    self.latest = changeDatasetIdx
+                    changeDatasetIdx = None
+                    print(f'Dataset: {self.latest}') 
                     
-            if (not keyboard.is_pressed('alt gr+1') and send1):  # dataset index
-                send1 = False
-                self.latest = 1
-                print(f'Dataset: {self.latest}')
-
-            if (not keyboard.is_pressed('alt gr+2') and send2):  # dataset index 
-                send2 = False           
-                self.latest = 2
-                print(f'Dataset: {self.latest}')
-
-            if (not keyboard.is_pressed('alt gr+3') and send3):  # dataset index
-                send3 = False
-                self.latest = 3
-                print(f'Dataset: {self.latest}')
-
-            if (not keyboard.is_pressed('alt gr+4') and send4):  # dataset index
-                send4 = False
-                self.latest = 4
-                print(f'Dataset: {self.latest}')
-
+           
 if __name__ == '__main__':
     a = DatasetIndexReceiver()
 
